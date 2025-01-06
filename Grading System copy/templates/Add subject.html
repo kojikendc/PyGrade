@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Subject</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .alert.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #003366, #f1ed07);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+    background-color: #fff;
+    padding: 15px; /* Retaining the padding */
+    border-radius: 10px; /* Slightly rounded corners */
+    width: 500px; /* Increased width */
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow for compact look */
+}
+
+
+        h1 {
+            text-align: center;
+            margin-bottom: 15px; /* Reduced margin */
+        }
+
+        .form-group {
+            margin-bottom: 15px; /* Reduced space between fields */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 8px; /* Reduced padding */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group select:hover,
+        .form-group input:hover {
+            border-color: #005c99;
+            box-shadow: 0 0 10px rgba(0, 92, 153, 0.5);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007acc;
+            box-shadow: 0 0 10px rgba(0, 92, 153, 0.7);
+        }
+
+        .form-group button {
+            background-color: #003366;
+            color: #fff;
+            border: none;
+            padding: 8px 16px; /* Reduced padding */
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            transform: scale(1.05);
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        #progressBar {
+            height: 5px;
+            background: #ccc;
+            margin-bottom: 20px;
+        }
+
+        #progressBar div {
+            height: 100%;
+            width: 0;
+            background: #007acc;
+            transition: width 0.3s;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon input {
+            padding-left: 30px;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Create New Subject</h1>
+
+        <!-- Flash Messages Display -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div id="progressBar">
+            <div id="progress"></div>
+        </div>
+
+        <form id="addSubjectForm" action="/add-subject" method="post" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="year">Year Level</label>
+                <select id="year" name="year" aria-label="Year Level" required>
+                    <option value="" disabled selected>Select year level</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                </select>
+                <span class="error" id="yearError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="section">Section</label>
+                <input type="text" id="section" name="section" placeholder="Enter section">
+                <span class="error" id="sectionError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="subjectType">Type of the Subject</label>
+                <select id="subjectType" name="subjectType" aria-label="Subject Type" required>
+                    <option value="" disabled selected>Select subject type</option>
+                    <option value="Lecture">Lecture</option>
+                    <option value="Laboratory">Laboratory</option>
+                    <option value="Lecture/Laboratory">Lecture/Laboratory</option>
+                </select>
+                <span class="error" id="typeError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="subjectCode">Subject Code</label>
+                <input type="text" id="subjectCode" name="subjectCode" placeholder="Enter subject code" required>
+                <span class="error" id="codeError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="subjectName">Subject Name</label>
+                <input type="text" id="subjectName" name="subjectName" aria-label="Subject Name" placeholder="Enter subject name" required>
+                <span class="error" id="nameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="units">Units</label>
+                <input type="number" id="units" name="units" aria-label="Units" placeholder="Enter number of units" min="1" max="6" required>
+                <span class="error" id="unitsError"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit">Add Subject</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function validateForm() {
+            let isValid = true;
+
+            // Clear existing error messages
+            document.querySelectorAll('.error').forEach((el) => el.textContent = '');
+
+            const year = document.getElementById('year').value;
+            const subjectType = document.getElementById('subjectType').value;
+            const subjectCode = document.getElementById('subjectCode').value;
+            const subjectName = document.getElementById('subjectName').value;
+            const units = document.getElementById('units').value;
+            const section = document.getElementById('section').value;
+
+            if (!year) {
+                document.getElementById('yearError').textContent = 'Year level is required.';
+                isValid = false;
+            }
+
+            if (!subjectType) {
+                document.getElementById('typeError').textContent = 'Subject type is required.';
+                isValid = false;
+            }
+
+            if (!subjectCode.trim()) {
+                document.getElementById('codeError').textContent = 'Subject code is required.';
+                isValid = false;
+            }
+
+            if (!subjectName.trim()) {
+                document.getElementById('nameError').textContent = 'Subject name is required.';
+                isValid = false;
+            }
+
+            if (units < 1 || units > 6 || !units) {
+                document.getElementById('unitsError').textContent = 'Units must be between 1 and 6.';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Update the progress bar as form inputs are filled
+        document.querySelectorAll('input, select').forEach((el) => {
+            el.addEventListener('input', updateProgress);
+        });
+
+        function updateProgress() {
+            const filled = [...document.querySelectorAll('input, select')].filter(el => el.value.trim()).length;
+            const total = document.querySelectorAll('input, select').length;
+            document.getElementById('progress').style.width = `${(filled / total) * 100}%`;
+        }
+    </script>
+
+</body>
+</html>

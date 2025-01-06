@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+        }
+
+        /* Wrapper for Flexbox */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #003366;
+            color: white;
+            padding: 10px 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-time {
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logout-btn button {
+            background-color: #cc0000;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .logout-btn button:hover {
+            background-color: #b30000;
+            transform: scale(1.05);
+        }
+
+        /* Main Content */
+        .container {
+            text-align: center;
+            margin: 10px auto;
+            padding: 0 10px;
+            flex: 1; /* Pushes footer to the bottom */
+        }
+
+        .logo-image {
+            max-width: 180px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        h1, p {
+            margin: 10px 0;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .menu-item {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 140px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .menu-item img {
+            width: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 10px;
+            background-color: #6b6c6d;
+            color: white;
+            text-align: center;
+        }
+
+        /* Typing animation */
+   /* Typing animation */
+@keyframes typing {
+    0% {
+        width: 0;
+        border-right: 3px solid #333;
+    }
+    90% {
+        width: 100%;
+        border-right: 3px solid #333;
+    }
+    100% {
+        width: 100%;
+        border-right: 3px solid transparent; /* Make the cursor disappear */
+    }
+}
+
+.typing-effect {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid #333;  /* Cursor style */
+    width: 0;
+    animation: typing 2s steps(30) 2s forwards; /* 2s duration, 30 steps for the characters */
+}
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-text {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            .date-time {
+                font-size: 12px;
+            }
+
+            .logout-btn button {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .menu-item {
+                width: 120px;
+                padding: 15px;
+            }
+
+            .menu-item img {
+                width: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-item {
+                width: 130px;
+                padding: 20px;
+            }
+
+            .menu-item img {
+                width: 30px;
+            }
+
+            .logo-image {
+                margin-top: 60px;
+                max-width: 190px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <!-- Header / Navigation Bar -->
+        <div class="header">
+            <div class="logo-text">Pangasinan State University</div>
+            <div class="nav-right">
+                <div class="date-time" id="date-time"></div>
+                <form action="{{ url_for('logout') }}" method="POST" class="logout-btn">
+                    <button type="submit">Log Out</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <img src="{{ url_for('static', filename='images/Pangasinan_State_University_logo.png') }}" alt="Logo" class="logo-image">
+            <h1><span class="typing-effect">Welcome to the Admin</span></h1>
+            <p>Access and control all accounts.</p>
+            <h3>Main Menu</h3>
+
+            <div class="menu-container">
+                <div class="menu-item" onclick="window.open('/admin_create_account', '_blank')">
+                    <img src="{{ url_for('static', filename='images/create acc2.png') }}" alt="Create Account">
+                    <p>Create Account</p>
+                </div>
+                <div class="menu-item" onclick="window.open('/view_accounts', '_blank')">
+                    <img src="{{ url_for('static', filename='images/search.png') }}" alt="View Account">
+                    <p>View Account</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2024 PSU COMPUTER ENGINEERING DEPARTMENT. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript to Update Time -->
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const formattedTime = now.toDateString() + ' ' + now.toLocaleTimeString();
+            document.getElementById('date-time').innerHTML = formattedTime;
+        }
+        setInterval(updateTime, 1000);  // Update every second
+    </script>
+
+</body>
+</html>

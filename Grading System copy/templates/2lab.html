@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grading System Management</title>
+    <style>
+       body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #000000;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #000000;
+        }
+        form {
+            width: 3000px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #003366, #f1ed07);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .top-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .left-container {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #0b0b0b;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[readonly] {
+            background-color: #f9f9f9;
+        }
+        button, .add-row-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px 0;
+            display: block;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover, .add-row-btn:hover {
+            background-color: #0056b3;
+        }
+        .add-row-btn {
+            width: 40px; /* Set a fixed width for the button */
+            height: 40px; /* Set a fixed height for the button */
+            padding: 0; /* Remove padding */
+            font-size: 20px; /* Adjust font size */
+            text-align: center;
+            border-radius: 50%; /* Make it circular */
+        }
+        .input-field {
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #searchBar, .subject-code {
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .logo-container {
+            text-align: center;
+        }
+        .logo {
+            width: 100px; /* Adjust the width as needed */
+            height: auto;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .heading {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+    <script>
+        const transmutationTable = [
+            { score: 0, equivalent: 0 },
+            { score: 1, equivalent: 1 },
+            { score: 2, equivalent: 2 },
+            { score: 3, equivalent: 3 },
+            { score: 4, equivalent: 4 },
+            { score: 5, equivalent: 5 },
+            { score: 6, equivalent: 6 },
+            { score: 7, equivalent: 7 },
+            { score: 8, equivalent: 8 },
+            { score: 9, equivalent: 9 },
+            { score: 10, equivalent: 10 },
+            { score: 11, equivalent: 11 },
+            { score: 12, equivalent: 12 },
+            { score: 13, equivalent: 13 },
+            { score: 14, equivalent: 15 },
+            { score: 15, equivalent: 17 },
+            { score: 16, equivalent: 19 },
+            { score: 17, equivalent: 21 },
+            { score: 18, equivalent: 23 },
+            { score: 19, equivalent: 25 },
+            { score: 20, equivalent: 27 },
+            { score: 21, equivalent: 29 },
+            { score: 22, equivalent: 31 },
+            { score: 23, equivalent: 33 },
+            { score: 24, equivalent: 35 },
+            { score: 25, equivalent: 37 },
+            { score: 26, equivalent: 39 },
+            { score: 27, equivalent: 41 },
+            { score: 28, equivalent: 43 },
+            { score: 29, equivalent: 45 },
+            { score: 30, equivalent: 47 },
+            { score: 31, equivalent: 49 },
+            { score: 32, equivalent: 51 },
+            { score: 33, equivalent: 53 },
+            { score: 34, equivalent: 55 },
+            { score: 35, equivalent: 57 },
+            { score: 36, equivalent: 59 },
+            { score: 37, equivalent: 61 },
+            { score: 38, equivalent: 63 },
+            { score: 39, equivalent: 65 },
+            { score: 40, equivalent: 67 },
+            { score: 41, equivalent: 69 },
+            { score: 42, equivalent: 71 },
+            { score: 43, equivalent: 72 },
+            { score: 44, equivalent: 72 },
+            { score: 45, equivalent: 73 },
+            { score: 46, equivalent: 73 },
+            { score: 47, equivalent: 74 },
+            { score: 48, equivalent: 74 },
+            { score: 49, equivalent: 75 },
+            { score: 50, equivalent: 75 },
+            { score: 51, equivalent: 76 },
+            { score: 52, equivalent: 76 },
+            { score: 53, equivalent: 77 },
+            { score: 54, equivalent: 77 },
+            { score: 55, equivalent: 78 },
+            { score: 56, equivalent: 78 },
+            { score: 57, equivalent: 79 },
+            { score: 58, equivalent: 79 },
+            { score: 59, equivalent: 80 },
+            { score: 60, equivalent: 80 },
+            { score: 61, equivalent: 81 },
+            { score: 62, equivalent: 81 },
+            { score: 63, equivalent: 82 },
+            { score: 64, equivalent: 82 },
+            { score: 65, equivalent: 83 },
+            { score: 66, equivalent: 83 },
+            { score: 67, equivalent: 84 },
+            { score: 68, equivalent: 84 },
+            { score: 69, equivalent: 85 },
+            { score: 70, equivalent: 85 },
+            { score: 71, equivalent: 86 },
+            { score: 72, equivalent: 86 },
+            { score: 73, equivalent: 87 },
+            { score: 74, equivalent: 87 },
+            { score: 75, equivalent: 88 },
+            { score: 76, equivalent: 88 },
+            { score: 77, equivalent: 89 },
+            { score: 78, equivalent: 89 },
+            { score: 79, equivalent: 90 },
+            { score: 80, equivalent: 90 },
+            { score: 81, equivalent: 91 },
+            { score: 82, equivalent: 91 },
+            { score: 83, equivalent: 92 },
+            { score: 84, equivalent: 92 },
+            { score: 85, equivalent: 93 },
+            { score: 86, equivalent: 93 },
+            { score: 87, equivalent: 94 },
+            { score: 88, equivalent: 94 },
+            { score: 89, equivalent: 95 },
+            { score: 90, equivalent: 95 },
+            { score: 91, equivalent: 96 },
+            { score: 92, equivalent: 96 },
+            { score: 93, equivalent: 97 },
+            { score: 94, equivalent: 97 },
+            { score: 95, equivalent: 98 },
+            { score: 96, equivalent: 98 },
+            { score: 97, equivalent: 99 },
+            { score: 98, equivalent: 99 },
+            { score: 99, equivalent: 100 },
+        ];
+        function getTransmutedGrade(score) {
+            const transmuted = transmutationTable.find(item => item.score >= score);
+            return transmuted ? transmuted.equivalent : 100;
+        }
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            const tableBody = row.closest('tbody');
+            const rowIndex = Array.from(tableBody.rows).indexOf(row);
+
+            // Delete corresponding rows in all tables
+            document.querySelector(`#midtermTable tbody tr:nth-child(${rowIndex + 1})`).remove();
+            document.querySelector(`#finalTermTable tbody tr:nth-child(${rowIndex + 1})`).remove();
+            document.querySelector(`#finalGradeTable tbody tr:nth-child(${rowIndex + 1})`).remove();
+
+            saveFormData();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFormData();
+        });
+
+        function syncName(rowIdx) {
+            const midtermNameField = document.querySelector(`#midtermTable tbody tr:nth-child(${rowIdx}) input[name="studentName"]`);
+            const finalTermNameField = document.querySelector(`#finalTermTable tbody tr:nth-child(${rowIdx}) input[name="studentName"]`);
+            const finalGradeNameField = document.querySelector(`#finalGradeTable tbody tr:nth-child(${rowIdx}) input[name="studentName"]`);
+
+            if (midtermNameField && finalTermNameField && finalGradeNameField) {
+                finalTermNameField.value = midtermNameField.value;
+                finalGradeNameField.value = midtermNameField.value;
+            }
+        }
+
+        function addRow() {
+            // Get the table bodies
+            const midtermBody = document.getElementById('midtermBody');
+            const finalTermBody = document.getElementById('finalTermBody');
+            const finalGradeBody = document.getElementById('finalGradeBody');
+
+            // Get the new row index
+            const newRowIdx = midtermBody.rows.length + 1;
+
+            // Create a new row structure
+            const newRow = `
+                <tr>
+                    <td><input name="studentName" type="text" oninput="syncName(${newRowIdx})"></td>
+                    <td><input name="midtermLaboratory1" type="text"></td>
+                    <td><input name="midtermLaboratory2" type="text"></td>
+                    <td><input name="midtermLaboratory3" type="text"></td>
+                    <td><input name="midtermLaboratory4" type="text"></td>
+                    <td><input name="midtermLaboratory5" type="text"></td>
+                    <td><input name="midtermLaboratory6" type="text"></td>
+                    <td><input name="midtermLaboratory7" type="text"></td>
+                    <td><input name="midtermActivity1" type="text"></td>
+                    <td><input name="midtermActivity2" type="text"></td>
+                    <td><input name="midtermActivity3" type="text"></td>
+                    <td><input name="midtermAttendance" type="text"></td>
+                    <td><input name="midtermExam" type="text"></td>
+                    <td><input name="midtermTotal" type="text" readonly></td>
+                    <td><input name="midtermTransmuted" type="text" readonly></td>
+                    <td><button type="button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>`;
+
+            const newFinalRow = `
+                <tr>
+                    <td><input name="studentName" type="text" oninput="syncName(${newRowIdx})"></td>
+                    <td><input name="finalLaboratory8" type="text"></td>
+                    <td><input name="finalLaboratory9" type="text"></td>
+                    <td><input name="finalLaboratory10" type="text"></td>
+                    <td><input name="finalLaboratory11" type="text"></td>
+                    <td><input name="finalLaboratory12" type="text"></td>
+                    <td><input name="finalLaboratory13" type="text"></td>
+                    <td><input name="finalLaboratory14" type="text"></td>
+                    <td><input name="finalActivity1" type="text"></td>
+                    <td><input name="finalActivity2" type="text"></td>
+                    <td><input name="finalActivity3" type="text"></td>
+                    <td><input name="finalAttendance" type="text"></td>
+                    <td><input name="finalExam" type="text"></td>
+                    <td><input name="finalTotal" type="text" readonly></td>
+                    <td><input name="finalTransmuted" type="text" readonly></td>
+                    <td><button type="button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>`;
+
+            const newFinalGradeRow = `
+                <tr>
+                    <td><input name="studentName" type="text" readonly></td>
+                    <td><input name="midtermTransmuted" type="text" readonly></td>
+                    <td><input name="finalTransmuted" type="text" readonly></td>
+                    <td><input name="finalGrade" type="text" readonly></td>
+                    <td><input name="numericalRating" type="text" readonly></td>
+                    <td><input name="descriptiveRating" type="text" readonly></td>
+                    <td><input name="remarksRating" type="text" readonly></td>
+                </tr>`;
+
+            // Insert the new row into the table bodies
+            midtermBody.insertAdjacentHTML('beforeend', newRow);
+            finalTermBody.insertAdjacentHTML('beforeend', newFinalRow);
+            finalGradeBody.insertAdjacentHTML('beforeend', newFinalGradeRow);
+
+            saveFormData();
+        }
+
+        function searchStudent() {
+            const searchQuery = document.getElementById('searchBar').value.toLowerCase().trim();
+            const midtermRows = document.querySelectorAll('#midtermTable tbody tr');
+            const finalTermRows = document.querySelectorAll('#finalTermTable tbody tr');
+            const finalGradeRows = document.querySelectorAll('#finalGradeTable tbody tr');
+            let firstMatchRow = null;
+
+            midtermRows.forEach((midtermRow, index) => {
+                const midtermNameField = midtermRow.querySelector('input[name="studentName"]');
+                const finalTermRow = finalTermRows[index];
+                const finalGradeRow = finalGradeRows[index];
+
+                if (midtermNameField) {
+                    const studentName = midtermNameField.value.toLowerCase();
+                    const isMatch = studentName.includes(searchQuery);
+
+                    midtermRow.style.display = isMatch ? '' : 'none';
+                    if (finalTermRow) finalTermRow.style.display = isMatch ? '' : 'none';
+                    if (finalGradeRow) finalGradeRow.style.display = isMatch ? '' : 'none';
+
+                    midtermNameField.style.backgroundColor = isMatch ? 'white' : '';
+                    if (finalTermRow) {
+                        const finalTermNameField = finalTermRow.querySelector('input[name="studentName"]');
+                        if (finalTermNameField) finalTermNameField.style.backgroundColor = isMatch ? 'white' : '';
+                    }
+                    if (finalGradeRow) {
+                        const finalGradeNameField = finalGradeRow.querySelector('input[name="studentName"]');
+                        if (finalGradeNameField) finalGradeNameField.style.backgroundColor = isMatch ? 'white' : '';
+                    }
+
+                    if (isMatch && !firstMatchRow) {
+                        firstMatchRow = midtermRow;
+                    }
+                }
+            });
+
+            if (firstMatchRow) {
+                firstMatchRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        function getNumericalRating(finalGrade) {
+            const grade = parseFloat(finalGrade);
+            if (grade >= 97) return 1.00;
+            if (grade >= 94) return 1.25;
+            if (grade >= 91) return 1.50;
+            if (grade >= 88) return 1.75;
+            if (grade >= 85) return 2.00;
+            if (grade >= 82) return 2.25;
+            if (grade >= 79) return 2.50;
+            if (grade >= 76) return 2.75;
+            if (grade >= 75) return 3.00;
+            if (grade >= 72) return 4.00;
+            return 5.00;
+        }
+
+        function getDescriptiveRating(finalGrade) {
+            const grade = parseFloat(finalGrade);
+            if (grade >= 97) return "Excellent";
+            if (grade >= 94) return "Very Good";
+            if (grade >= 91) return "Very Good";
+            if (grade >= 88) return "Good";
+            if (grade >= 85) return "Good";
+            if (grade >= 82) return "Good";
+            if (grade >= 79) return "Fair";
+            if (grade >= 76) return "Fair";
+            if (grade >= 75) return "Passed";
+            if (grade >= 72) return "Conditional";
+            if (grade === "Inc") return "Incomplete";
+            return "Failed";
+        }
+
+        function getRemarksRating(finalGrade) {
+            const grade = parseFloat(finalGrade);
+            if (grade >= 75) return "Passed";
+            if (grade === "Inc") return "Incomplete";
+            return "Failed";
+        }
+
+        //================================================================================================================================
+        // LABORATORY MIDTERM CALCULATION
+        //================================================================================================================================
+        function calculateMidtermGrade(tr) {
+            // Extracting maximum scores from the row (Quizzes, Participation, and Exam)
+            const maxlaboratory1 = parseFloat(document.querySelector('input[name="maxMidtermLaboratory1"]').value) || 100;
+            const maxlaboratory2 = parseFloat(document.querySelector('input[name="maxMidtermLaboratory2"]').value) || 100;
+            const maxlaboratory3 = parseFloat(document.querySelector('input[name="maxMidtermLaboratory3"]').value) || 100;
+            const maxlaboratory4 = parseFloat(document.querySelector('input[name="maxMidtermLaboratory4"]').value) || 100;
+            const maxlaboratory5 = parseFloat(document.querySelector('input[name="maxMidtermLaboratory5"]').value) || 100;
+            const maxlaboratory6 = parseFloat(document.querySelector('input[name="maxMidtermLaboratory6"]').value) || 100;
+            const maxlaboratory7 = parseFloat(document.querySelector('input[name="maxMidtermLaboratory7"]').value) || 100;
+            const maxactivity1 = parseFloat(document.querySelector('input[name="maxMidtermActivity1"]').value) || 100;
+            const maxactivity2 = parseFloat(document.querySelector('input[name="maxMidtermActivity2"]').value) || 100;
+            const maxactivity3 = parseFloat(document.querySelector('input[name="maxMidtermActivity3"]').value) || 100;
+            const maxattendance = parseFloat(document.querySelector('input[name="maxMidtermAttendance"]').value) || 100;
+            const maxexam = parseFloat(document.querySelector('input[name="maxMidtermExam"]').value) || 100;
+            // Extracting scores from the row (Quizzes, Participation, and Exam)
+            const laboratory1 = (parseFloat(tr.querySelector('input[name="midtermLaboratory1"]').value) || 0) / maxlaboratory1;
+            const laboratory2 = (parseFloat(tr.querySelector('input[name="midtermLaboratory2"]').value) || 0) / maxlaboratory2;
+            const laboratory3 = (parseFloat(tr.querySelector('input[name="midtermLaboratory3"]').value) || 0) / maxlaboratory3;
+            const laboratory4 = (parseFloat(tr.querySelector('input[name="midtermLaboratory4"]').value) || 0) / maxlaboratory4;
+            const laboratory5 = (parseFloat(tr.querySelector('input[name="midtermLaboratory5"]').value) || 0) / maxlaboratory5;
+            const laboratory6 = (parseFloat(tr.querySelector('input[name="midtermLaboratory6"]').value) || 0) / maxlaboratory6;
+            const laboratory7 = (parseFloat(tr.querySelector('input[name="midtermLaboratory7"]').value) || 0) / maxlaboratory7;
+            const activity1 = (parseFloat(tr.querySelector('input[name="midtermActivity1"]').value) || 0) / maxactivity1;
+            const activity2 = (parseFloat(tr.querySelector('input[name="midtermActivity2"]').value) || 0) / maxactivity2;
+            const activity3 = (parseFloat(tr.querySelector('input[name="midtermActivity3"]').value) || 0) / maxactivity3;
+            const attendance = (parseFloat(tr.querySelector('input[name="midtermAttendance"]').value) || 0) / maxattendance;
+            const exam = (parseFloat(tr.querySelector('input[name="midtermExam"]').value) || 0) / maxexam;
+
+            // Calculate participation score (assignments, activities, and attendance)
+            const laboratoryPerformance = (((laboratory1 + laboratory2 + laboratory3 + laboratory4 + laboratory5 + laboratory6 + laboratory7) / 7) * 20) +
+                                    (((activity1 + activity2 + activity3) / 3) * 20) +
+                                    (attendance * 20);
+
+            // Midterm grade calculation (Weighted sum of Quiz, Participation, and Exam)
+            const laboratorymidtermGrade = laboratoryPerformance + (exam * 40);
+
+            // Update the midterm grade cell in the row (Column P for Midterm Grade)
+            tr.querySelector('input[name="midtermTotal"]').value = (laboratorymidtermGrade).toFixed(2);  // Round the final grade to 2 decimal places
+            tr.querySelector('input[name="midtermTransmuted"]').value = getTransmutedGrade(laboratorymidtermGrade); // Transmuted Grade
+            saveFormData();
+        }
+        //================================================================================================================================
+        // LABORATORY FINALTERM CALCULATION
+        //================================================================================================================================
+        function calculateFinaltermGrade(tr) {
+            // Extracting maximum scores from the row (Quizzes, Participation, and Exam)
+            const maxlaboratory8 = parseFloat(document.querySelector('input[name="maxFinalLaboratory8"]').value) || 100;
+            const maxlaboratory9 = parseFloat(document.querySelector('input[name="maxFinalLaboratory9"]').value) || 100;
+            const maxlaboratory10 = parseFloat(document.querySelector('input[name="maxFinalLaboratory10"]').value) || 100;
+            const maxlaboratory11 = parseFloat(document.querySelector('input[name="maxFinalLaboratory11"]').value) || 100;
+            const maxlaboratory12 = parseFloat(document.querySelector('input[name="maxFinalLaboratory12"]').value) || 100;
+            const maxlaboratory13 = parseFloat(document.querySelector('input[name="maxFinalLaboratory13"]').value) || 100;
+            const maxlaboratory14 = parseFloat(document.querySelector('input[name="maxFinalLaboratory14"]').value) || 100;
+            const maxactivity1 = parseFloat(document.querySelector('input[name="maxFinalActivity1"]').value) || 100;
+            const maxactivity2 = parseFloat(document.querySelector('input[name="maxFinalActivity2"]').value) || 100;
+            const maxactivity3 = parseFloat(document.querySelector('input[name="maxFinalActivity3"]').value) || 100;
+            const maxattendance = parseFloat(document.querySelector('input[name="maxFinalAttendance"]').value) || 100;
+            const maxexam = parseFloat(document.querySelector('input[name="maxFinalExam"]').value) || 100;
+            // Extracting scores from the row (Quizzes, Participation, and Exam)
+            const laboratory8 = (parseFloat(tr.querySelector('input[name="finalLaboratory8"]').value) || 0) / maxlaboratory8;
+            const laboratory9 = (parseFloat(tr.querySelector('input[name="finalLaboratory9"]').value) || 0) / maxlaboratory9;
+            const laboratory10 = (parseFloat(tr.querySelector('input[name="finalLaboratory10"]').value) || 0) / maxlaboratory10;
+            const laboratory11 = (parseFloat(tr.querySelector('input[name="finalLaboratory11"]').value) || 0) / maxlaboratory11;
+            const laboratory12 = (parseFloat(tr.querySelector('input[name="finalLaboratory12"]').value) || 0) / maxlaboratory12;
+            const laboratory13 = (parseFloat(tr.querySelector('input[name="finalLaboratory13"]').value) || 0) / maxlaboratory13;
+            const laboratory14 = (parseFloat(tr.querySelector('input[name="finalLaboratory14"]').value) || 0) / maxlaboratory14;
+            const activity1 = (parseFloat(tr.querySelector('input[name="finalActivity1"]').value) || 0) / maxactivity1;
+            const activity2 = (parseFloat(tr.querySelector('input[name="finalActivity2"]').value) || 0) / maxactivity2;
+            const activity3 = (parseFloat(tr.querySelector('input[name="finalActivity3"]').value) || 0) / maxactivity3;
+            const attendance = (parseFloat(tr.querySelector('input[name="finalAttendance"]').value) || 0) / maxattendance;
+            const exam = (parseFloat(tr.querySelector('input[name="finalExam"]').value) || 0) / maxexam;
+            // Calculate participation score (laboratory, activities, and attendance)
+            const laboratoryPerformance = (((laboratory8 + laboratory9 + laboratory10 + laboratory11 + laboratory12 + laboratory13 + laboratory14) / 7) * 20) +
+                        (((activity1 + activity2 + activity3) / 3) * 20) +
+                        (attendance * 20);
+
+
+            // Midterm grade calculation (Weighted sum of Quiz, Participation, and Exam)
+            const laboratoryfinaltermGrade = laboratoryPerformance + (exam * 40);
+
+            // Update the midterm grade cell in the row (Column P for Midterm Grade)
+            tr.querySelector('input[name="finalTotal"]').value = (laboratoryfinaltermGrade).toFixed(2);  // Round the final grade to 2 decimal places
+            tr.querySelector('input[name="finalTransmuted"]').value = getTransmutedGrade(laboratoryfinaltermGrade); // Transmuted Grade
+            saveFormData();
+        }
+
+        function calculateFinalGrade(tr) {
+            const midtermTransmutedGrade = parseFloat(tr.querySelector('input[name="midtermTransmuted"]').value) || 0;
+            const finalTermTransmutedGrade = parseFloat(tr.querySelector('input[name="finalTransmuted"]').value) || 0;
+            const finalGrade = (midtermTransmutedGrade + finalTermTransmutedGrade) / 2;
+            tr.querySelector('input[name="finalGrade"]').value = finalGrade.toFixed(2); // Transmute and round the final grade to 2 decimal places
+            tr.querySelector('input[name="numericalRating"]').value = getNumericalRating(finalGrade); // Numerical Rating
+            tr.querySelector('input[name="descriptiveRating"]').value = getDescriptiveRating(finalGrade); // Descriptive Rating
+            tr.querySelector('input[name="remarksRating"]').value = getRemarksRating(finalGrade); // Remarks Rating
+            saveFormData();
+        }
+
+        function calculateGrades() {
+            const midtermRows = document.querySelectorAll('#midtermTable tbody tr');
+            midtermRows.forEach(row => calculateMidtermGrade(row));
+            const finaltermRows = document.querySelectorAll('#finalTermTable tbody tr');
+            finaltermRows.forEach(row => calculateFinaltermGrade(row));
+            const finalGradeRows = document.querySelectorAll('#finalGradeTable tbody tr');
+            finalGradeRows.forEach(row => {
+                const midtermRow = document.querySelector(`#midtermTable tbody tr:nth-child(${Array.from(finalGradeRows).indexOf(row) + 1})`);
+                const finalTermRow = document.querySelector(`#finalTermTable tbody tr:nth-child(${Array.from(finalGradeRows).indexOf(row) + 1})`);
+                row.querySelector('input[name="midtermTransmuted"]').value = midtermRow.querySelector('input[name="midtermTransmuted"]').value;
+                row.querySelector('input[name="finalTransmuted"]').value = finalTermRow.querySelector('input[name="finalTransmuted"]').value;
+                calculateFinalGrade(row);
+            });
+            saveFormData();
+        }
+
+        function saveFormData() {
+            const formData = {
+                midterm: [],
+                finalTerm: [],
+                finalGrade: [],
+                maxScores: {}
+            };
+
+            document.querySelectorAll('#midtermTable tbody tr').forEach(row => {
+                const rowData = {};
+                row.querySelectorAll('input').forEach(input => {
+                    rowData[input.name] = input.value;
+                });
+                formData.midterm.push(rowData);
+            });
+
+            document.querySelectorAll('#finalTermTable tbody tr').forEach(row => {
+                const rowData = {};
+                row.querySelectorAll('input').forEach(input => {
+                    rowData[input.name] = input.value;
+                });
+                formData.finalTerm.push(rowData);
+            });
+
+            document.querySelectorAll('#finalGradeTable tbody tr').forEach(row => {
+                const rowData = {};
+                row.querySelectorAll('input').forEach(input => {
+                    rowData[input.name] = input.value;
+                });
+                formData.finalGrade.push(rowData);
+            });
+
+            document.querySelectorAll('input[name^="max"]').forEach(input => {
+                formData.maxScores[input.name] = input.value;
+            });
+
+            localStorage.setItem('formData', JSON.stringify(formData));
+        }
+
+        function loadFormData() {
+            const formData = JSON.parse(localStorage.getItem('formData'));
+
+            if (!formData) return;
+
+            // Load max scores
+            for (const [key, value] of Object.entries(formData.maxScores)) {
+                document.querySelector(`input[name="${key}"]`).value = value;
+            }
+
+            // Clear existing rows except the first one
+            document.querySelectorAll('#midtermTable tbody tr:not(:first-child)').forEach(row => row.remove());
+            document.querySelectorAll('#finalTermTable tbody tr:not(:first-child)').forEach(row => row.remove());
+            document.querySelectorAll('#finalGradeTable tbody tr:not(:first-child)').forEach(row => row.remove());
+
+            // Load midterm data
+            formData.midterm.forEach((rowData, index) => {
+                if (index > 0) addRow(); // Skip adding a row for the first entry, it's already present
+                const row = document.querySelector(`#midtermTable tbody tr:nth-child(${index + 1})`);
+                for (const [key, value] of Object.entries(rowData)) {
+                    row.querySelector(`input[name="${key}"]`).value = value;
+                }
+            });
+
+            // Load final term data
+            formData.finalTerm.forEach((rowData, index) => {
+                const row = document.querySelector(`#finalTermTable tbody tr:nth-child(${index + 1})`);
+                for (const [key, value] of Object.entries(rowData)) {
+                    row.querySelector(`input[name="${key}"]`).value = value;
+                }
+            });
+
+            // Load final grade data
+            formData.finalGrade.forEach((rowData, index) => {
+                const row = document.querySelector(`#finalGradeTable tbody tr:nth-child(${index + 1})`);
+                for (const [key, value] of Object.entries(rowData)) {
+                    row.querySelector(`input[name="${key}"]`).value = value;
+                }
+            });
+        }
+
+        async function saveGrades() {
+            const subjectCode = document.getElementById('subjectCode').value;
+            const finalGradeRows = document.querySelectorAll('#finalGradeTable tbody tr');
+            const gradesData = Array.from(finalGradeRows).map(row => {
+                // Check if all required inputs are present in the row
+                const studentNameInput = row.querySelector('input[name="studentName"]');
+                const midtermTransmutedInput = row.querySelector('input[name="midtermTransmuted"]');
+                const finalTransmutedInput = row.querySelector('input[name="finalTransmuted"]');
+                const finalGradeInput = row.querySelector('input[name="finalGrade"]');
+                const numericalRatingInput = row.querySelector('input[name="numericalRating"]');
+                const descriptiveRatingInput = row.querySelector('input[name="descriptiveRating"]');
+                const remarksRatingInput = row.querySelector('input[name="remarksRating"]');
+
+                // Only include row data if all required inputs are present
+                if (studentNameInput && midtermTransmutedInput && finalTransmutedInput && finalGradeInput && numericalRatingInput && descriptiveRatingInput && remarksRatingInput) {
+                    return {
+                        studentName: studentNameInput.value,
+                        midtermTransmuted: midtermTransmutedInput.value,
+                        finalTransmuted: finalTransmutedInput.value,
+                        finalGrade: finalGradeInput.value,
+                        numericalRating: numericalRatingInput.value,
+                        descriptiveRating: descriptiveRatingInput.value,
+                        remarksRating: remarksRatingInput.value, // Corrected this line
+                    };
+                }
+                return null; // Exclude rows with missing inputs
+            }).filter(rowData => rowData !== null);
+
+            console.log('Sending grades data:', gradesData); // Log data being sent
+
+            const response = await fetch('/save_grades', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ subjectCode, grades: gradesData })
+            });
+
+            if (response.ok) {
+                alert('Grades saved successfully!');
+            } else {
+                alert('Failed to save grades.');
+            }
+        }
+    </script>
+</head>
+<body>
+     <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/Pangasinan_State_University_logo.png') }}" alt="Logo" class="logo">
+    </div>
+    <h1>Grading System Management <br> 2nd Year Laboratory</h1>
+
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+
+
+    <form id="gradingForm">
+        <div class="top-container">
+            <div class="left-container">
+                <input type="text" id="searchBar" class="search-bar" placeholder="Search Student" aria-label="Search student" oninput="searchStudent()">
+                <input id="subjectCode" type="text" placeholder="Subject Code" class="subject-code">
+            </div>
+        </div>
+        
+        <!-- Midterm Section -->
+        <h2>Midterm</h2>
+        <table id="midtermTable">
+            <thead>
+                <tr>
+                    <th rowspan="3">Student Name</th>
+                    <th colspan="11">Laboratory Performance</th>
+                    <th rowspan="3">Exam (40%)</th>
+                    <th rowspan="3">Midterm Grade</th>
+                    <th rowspan="3">Transmuted Grade</th>
+                    <th rowspan="4"></th>
+                </tr>
+                <tr>
+                    <th colspan="7">Laboratory Activities (20%)</th>
+                    <th colspan="4">Participation (40%)</th>
+                </tr>
+                <tr>
+                    <th>Laboratory 1</th>
+                    <th>Laboratory 2</th>
+                    <th>Laboratory 3</th>
+                    <th>Laboratory 4</th>
+                    <th>Laboratory 5</th>
+                    <th>Laboratory 6</th>
+                    <th>Laboratory 7</th>
+                    <th>Activity 1</th>
+                    <th>Activity 2</th>
+                    <th>Activity 3</th>
+                    <th>Attendance</th>
+                </tr>
+                <tr>
+                    <th>HPS</th>
+                    <th><input name="maxMidtermLaboratory1" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermLaboratory2" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermLaboratory3" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermLaboratory4" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermLaboratory5" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermLaboratory6" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermLaboratory7" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermActivity1" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermActivity2" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermActivity3" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermAttendance" type="text" placeholder="HPS"></th>
+                    <th><input name="maxMidtermExam" type="text" placeholder="HPS"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="midtermBody">
+                <tr>
+                    <td><input name="studentName" type="text" oninput="syncName(1)"></td>
+                    <td><input name="midtermLaboratory1" type="text"></td>
+                    <td><input name="midtermLaboratory2" type="text"></td>
+                    <td><input name="midtermLaboratory3" type="text"></td>
+                    <td><input name="midtermLaboratory4" type="text"></td>
+                    <td><input name="midtermLaboratory5" type="text"></td>
+                    <td><input name="midtermLaboratory6" type="text"></td>
+                    <td><input name="midtermLaboratory7" type="text"></td>
+                    <td><input name="midtermActivity1" type="text"></td>
+                    <td><input name="midtermActivity2" type="text"></td>
+                    <td><input name="midtermActivity3" type="text"></td>
+                    <td><input name="midtermAttendance" type="text"></td>
+                    <td><input name="midtermExam" type="text"></td>
+                    <td><input name="midtermTotal" type="text" readonly></td>
+                    <td><input name="midtermTransmuted" type="text" readonly></td>
+                    <td><button type="button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" class="add-row-btn" onclick="addRow()">+</button>
+
+        <!-- Final Term Section -->
+        <h2>Final Term</h2>
+        <table id="finalTermTable">
+            <thead>
+                <tr>
+                    <th rowspan="3">Student Name</th>
+                    <th colspan="11">Laboratory Performance</th>
+                    <th rowspan="3">Exam (40%)</th>
+                    <th rowspan="3">Final Term Grade</th>
+                    <th rowspan="3">Transmuted Grade</th>
+                    <th rowspan="4"></th>
+                </tr>
+                <tr>
+                    <th colspan="7">Class Standing (30%)</th>
+                    <th colspan="4">Participation (30%)</th>
+                </tr>
+                <tr>
+                    <th>Laboratory 8</th>
+                    <th>Laboratory 9</th>
+                    <th>Laboratory 10</th>
+                    <th>Laboratory 11</th>
+                    <th>Laboratory 12</th>
+                    <th>Laboratory 13</th>
+                    <th>Laboratory 14</th>
+                    <th>Activity 1</th>
+                    <th>Activity 2</th>
+                    <th>Activity 3</th>
+                    <th>Attendance</th>
+                </tr>
+                <tr>
+                    <th>HPS</th>
+                    <th><input name="maxFinalLaboratory8" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalLaboratory9" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalLaboratory10" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalLaboratory11" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalLaboratory12" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalLaboratory13" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalLaboratory14" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalActivity1" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalActivity2" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalActivity3" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalAttendance" type="text" placeholder="HPS"></th>
+                    <th><input name="maxFinalExam" type="text" placeholder="HPS"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="finalTermBody">
+                <tr>
+                    <td><input name="studentName" type="text" oninput="syncName(1)"></td>
+                    <td><input name="finalLaboratory8" type="text"></td>
+                    <td><input name="finalLaboratory9" type="text"></td>
+                    <td><input name="finalLaboratory10" type="text"></td>
+                    <td><input name="finalLaboratory11" type="text"></td>
+                    <td><input name="finalLaboratory12" type="text"></td>
+                    <td><input name="finalLaboratory13" type="text"></td>
+                    <td><input name="finalLaboratory14" type="text"></td>
+                    <td><input name="finalActivity1" type="text"></td>
+                    <td><input name="finalActivity2" type="text"></td>
+                    <td><input name="finalActivity3" type="text"></td>
+                    <td><input name="finalAttendance" type="text"></td>
+                    <td><input name="finalExam" type="text"></td>
+                    <td><input name="finalTotal" type="text" readonly></td>
+                    <td><input name="finalTransmuted" type="text" readonly></td>
+                    <td><button type="button" onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Final Grade Section -->
+        <h2>Final Grade</h2>
+        <table id="finalGradeTable">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Midterm Grade</th>
+                    <th>Final Term Grade</th>
+                    <th>Final Grade</th>
+                    <th>Numerical Rating</th>
+                    <th>Descriptive Rating</th>
+                    <th>Remarks Rating</th>
+                </tr>
+            </thead>
+            <tbody id="finalGradeBody">
+                <tr>
+                    <td><input name="studentName" type="text" readonly></td>
+                    <td><input name="midtermTransmuted" type="text" readonly></td>
+                    <td><input name="finalTransmuted" type="text" readonly></td>
+                    <td><input name="finalGrade" type="text" readonly></td>
+                    <td><input name="numericalRating" type="text" readonly></td>
+                    <td><input name="descriptiveRating" type="text" readonly></td>
+                    <td><input name="remarksRating" type="text" readonly></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="button" onclick="calculateGrades()">Calculate Grades</button>
+        <button type="button" onclick="saveGrades()">Save Grades</button>
+    </form>
+</body>
+</html>
