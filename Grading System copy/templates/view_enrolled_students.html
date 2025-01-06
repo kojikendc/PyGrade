@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrolled Students</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            padding: 40px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 0px;
+            font-size: 35px;
+            color: #2f3e46;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        #searchBar {
+            width: 350px;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f4f4f4;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            font-size: 18px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-buttons button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            width: 50%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+    <script>
+        function searchStudents() {
+            let input = document.getElementById("searchBar").value.toLowerCase();
+            let rows = Array.from(document.querySelectorAll("tbody tr"));
+            
+            rows.sort((a, b) => {
+                let nameA = a.querySelector("td").textContent.toLowerCase();
+                let nameB = b.querySelector("td").textContent.toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+
+            rows.forEach(row => {
+                let name = row.querySelector("td").textContent.toLowerCase();
+                if (name.includes(input)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            let tbody = document.querySelector("tbody");
+            tbody.innerHTML = "";
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        function openEditModal(studentId, subjectCode, grade, fullName, facultyUsername) {
+            document.getElementById('student_id').value = studentId;
+            document.getElementById('subject_code_modal').value = subjectCode;
+            document.getElementById('full_name').value = fullName;
+            document.getElementById('faculty_username').value = facultyUsername;
+            document.getElementById('grade').value = grade;
+
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+
+<header>
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    <h1>Enrolled Students for Subject: {{ subject_code }}</h1>
+</header>
+
+<main>
+    <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Search student..." onkeyup="searchStudents()">
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Subject Code</th>
+                <th>Subject Name</th>
+                <th>Faculty</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.full_name }}</td>
+                <td>{{ student.subject_code }}</td>
+                <td>{{ student.subject_name }}</td>
+                <td>{{ student.faculty_username }}</td>
+                <td class="action-buttons">
+                    
+                       
+                    </button>
+                    <a href="/delete_student/{{ student.user_id }}?subject_code={{ student.subject_code }}" onclick="return confirm('Are you sure you want to delete this student?')">
+                        <button class="delete">Delete</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h2>Edit Student</h2>
+        <form method="POST" action="/edit_student/{{ student_id }}/{{ subject_code }}">
+            <input type="hidden" id="student_id" name="student_id">
+            <input type="hidden" id="subject_code_modal" name="subject_code">
+
+            <div class="form-group">
+                <label for="full_name">Full Name:</label>
+                <input type="text" id="full_name" name="full_name" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="faculty_username">Faculty Username:</label>
+                <input type="text" id="faculty_username" name="faculty_username" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="grade">Grade:</label>
+                <input type="text" id="grade" name="grade">
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="save-btn">Save Changes</button>
+                <button type="button" class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

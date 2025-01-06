@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grades</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input {
+            width: 80px;
+            text-align: center;
+            border: none;
+            background: transparent;
+        }
+
+        .save-btn {
+            padding: 8px 15px;
+            background-color: #005c99;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #005c99;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #003366;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Grades for: {{ subject_code }}</h1>
+
+        <form method="POST" action="{{ url_for('save_quiz_scores', subject_code=subject_code) }}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Student Id</th>
+                        <th>Quiz</th>
+                        <th>Exams</th>
+                        <th>Seatworks</th>
+                        <th>Assignments</th>
+                        <th>Lab Reports</th>
+                        <th>Total grades</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if quiz_scores %}
+                        {% for score in quiz_scores %}
+                        <tr>
+                            <td>{{ score[1] }}</td>
+                            <td>{{ score[2] }}</td>
+                            <td>
+                                <input type="number" name="score_{{ score[0] }}" value="{{ score[3] }}" min="0" max="100">
+                            </td>
+                            <td>{{ score[4] }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No grades available for this subject.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" class="save-btn">Save Changes</button>
+            </div>
+        </form>
+
+        <a href="/subject-list" class="back-button">Back to Subjects</a>
+    </div>
+</body>
+</html>
