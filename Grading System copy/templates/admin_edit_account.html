@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #003366, #003366);
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input, select {
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #003366;
+            color: #fff;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #000000;
+        }
+    </style>
+    <script>
+        function toggleForm() {
+            const selection = document.getElementById('accountType').value;
+            const facultyForm = document.getElementById('editFacultyForm');
+            const studentForm = document.getElementById('editStudentForm');
+
+            if (selection === 'faculty') {
+                facultyForm.style.display = 'flex';
+                studentForm.style.display = 'none';
+            } else if (selection === 'student') {
+                studentForm.style.display = 'flex';
+                facultyForm.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Account</h1>
+        <label for="accountType">Select Account Type</label>
+        <select id="accountType" onchange="toggleForm()">
+            <option value="faculty">Faculty</option>
+            <option value="student">Student</option>
+        </select>
+
+        <form id="editFacultyForm" style="display: flex; flex-direction: column;">
+            <label for="facultyName">Name</label>
+            <input type="text" id="facultyName" name="facultyName" placeholder="Enter faculty name" required>
+
+            <label for="facultyEmail">Email</label>
+            <input type="email" id="facultyEmail" name="facultyEmail" placeholder="Enter email" required>
+
+            <label for="facultyDepartment">Department</label>
+            <input type="text" id="facultyDepartment" name="facultyDepartment" placeholder="Enter department" required>
+
+            <button type="submit">Save Changes</button>
+        </form>
+
+        <form id="editStudentForm" style="display: none; flex-direction: column;">
+            <label for="studentName">Name</label>
+            <input type="text" id="studentName" name="studentName" placeholder="Enter student name" required>
+
+            <label for="studentEmail">Email</label>
+            <input type="email" id="studentEmail" name="studentEmail" placeholder="Enter email" required>
+
+            <label for="studentID">Student ID</label>
+            <input type="text" id="studentID" name="studentID" placeholder="Enter student ID" required>
+
+            <label for="studentCourse">Course</label>
+            <input type="text" id="studentCourse" name="studentCourse" placeholder="Enter course" required>
+
+            <label for="studentYear">Year</label>
+            <select id="studentYear" name="studentYear">
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+            </select>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>
